@@ -1,9 +1,11 @@
 import torch
 import argparse
-from torchsummary import summary
-from datasets import get_dataloader
-from models import *
 from config import CNNConfig
+from torchsummary import summary
+from torchvision import transforms
+from torchvision import datasets as dset
+from models import *
+
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -28,6 +30,37 @@ def parse_arguments():
         """,
     )
     return parser.parse_args()
+
+
+def get_dataloader(save_dir):
+    train_transform = transforms.Compose(
+        [
+            transforms.RandomCrop(32, padding=4),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize((0.5071, 0.4867, 0.4304), (0.2675, 0.2565, 0.2761)),
+        ]
+    )
+
+    valid_transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Normalize((0.5071, 0.4867, 0.4304), (0.2675, 0.2565, 0.2761)),
+        ]
+    )
+    train_data = dset.CIFAR100(
+        root=save_dir, train=True, download=True, transform=train_transform
+    )
+    test_data = dset.CIFAR100(
+        root=save_dir, train=False, download=True, transform=valid_transform
+    )
+    train_loader = torch.utils.data.DataLoader(
+        train_data, batch_size=32, shuffle=True, num_workers=0
+    )
+    test_loader = torch.utils.data.DataLoader(
+        test_data, batch_size=32, shuffle=True, num_workers=0
+    )
+    return train_loader, test_loader
 
 
 if __name__ == "__main__":
