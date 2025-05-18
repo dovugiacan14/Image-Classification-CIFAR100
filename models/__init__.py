@@ -1,1 +1,1 @@
-from CNN import BasicCNN
+from .CNN import BasicCNN, CNNProcessor

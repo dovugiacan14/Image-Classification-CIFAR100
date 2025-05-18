@@ -1,9 +1,9 @@
 import torch
 import argparse
-from pathlib import Path
 from torchsummary import summary
-from datasets import download_dataset
+from datasets import get_dataloader
 from models import *
+from config import CNNConfig
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -31,15 +31,21 @@ def parse_arguments():
 
 
 if __name__ == "__main__":
+    # Step 1: Load Dataset
     data_dir = "dataset/"
-    if not Path(data_dir).exists():
-        download_dataset(data_dir)
     input_size = (3, 32, 32)
+    train_loader, test_loader = get_dataloader(data_dir)
+
+    # Step 2: Main Process
     args = parse_arguments()
     if args.option == 1:
         model = BasicCNN().to(device)
-        summary(model, input_size= input_size) # summary model 
-        
-        
+        summary(model, input_size=input_size)  # summary model
 
-    print(0)
+        # train model
+        CNNProcessor.train_model(
+            model=model, train_loader=train_loader, model_config=CNNConfig
+        )
+
+        # evaluate performance
+        CNNProcessor.evaluate(model=model, test_loader=test_loader, device=device)
