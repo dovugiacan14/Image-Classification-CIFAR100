@@ -1,5 +1,7 @@
 import torch
+import random
 import argparse
+import numpy as np 
 from config import CNNConfig
 from torchsummary import summary
 from torchvision import transforms
@@ -30,6 +32,15 @@ def parse_arguments():
         """,
     )
     return parser.parse_args()
+
+def set_random_seed(seed: int = 42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)  # for multi-GPU setups
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
 
 def get_dataloader(save_dir):
@@ -64,6 +75,8 @@ def get_dataloader(save_dir):
 
 
 if __name__ == "__main__":
+    set_random_seed()
+    
     # Step 1: Load Dataset
     data_dir = "dataset/"
     input_size = (3, 32, 32)

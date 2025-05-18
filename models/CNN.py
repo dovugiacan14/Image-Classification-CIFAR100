@@ -58,6 +58,12 @@ class CNNProcessor:
             print(
                 f"Epoch [{epoch+1}/{model_config.num_epochs}], Loss: {avg_loss:.4f}, Train Acc: {accuracy:.2f}%"
             )
+        
+        # save model
+        output_filename = f"{model_config.out_name}_{model_config.num_epochs}.pt"
+        torch.save(model.state_dict(), output_filename)
+        print(f"Model saved to {output_filename}.")
+
 
     @staticmethod
     def evaluate(model, test_loader, device="cpu"):

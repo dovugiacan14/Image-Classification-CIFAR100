@@ -10,6 +10,7 @@ class CNNConfig:
     num_epochs = 2
     batch_size = 32
     device= device
+    out_name = "cnn_model"
 
     @staticmethod
     def optimizer_fn(model):
