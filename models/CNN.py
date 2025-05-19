@@ -13,7 +13,8 @@ class BasicCNN(nn.Module):
         self.conv2 = nn.Conv2d(32, 64, kernel_size=4, padding=1)
         self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
         self.mp = nn.MaxPool2d(2, 2)
-        self.fc1 = nn.Linear(128 * 3 * 3, 256)
+        self.fc1 = nn.Linear(93312, 256)
+        # self.fc1 = nn.Linear(128 * 3 * 3, 256)
         self.fc2 = nn.Linear(256, 100)
 
     def forward(self, x):
