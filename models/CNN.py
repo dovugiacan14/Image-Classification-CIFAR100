@@ -4,8 +4,6 @@ from torchvision import transforms
 from torch.nn import functional as F
 from PIL import Image
 
-# from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, auc
-
 class BasicCNN(nn.Module):
     def __init__(self):
         super().__init__()

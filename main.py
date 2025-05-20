@@ -5,6 +5,8 @@ import numpy as np
 from torchsummary import summary
 from torchvision import transforms
 from torchvision import datasets as dset
+from torchvision.models import efficientnet_b0
+from transformers import ViTForImageClassification, ViTFeatureExtractor
 from models import *
 from config import *
 
@@ -45,14 +47,6 @@ def set_random_seed(seed: int = 42):
 
 
 def get_dataloader(save_dir):
-    # train_transform = transforms.Compose(
-    #     [
-    #         transforms.RandomCrop(32, padding=4),
-    #         transforms.RandomHorizontalFlip(),
-    #         transforms.ToTensor(),
-    #         transforms.Normalize((0.5071, 0.4867, 0.4304), (0.2675, 0.2565, 0.2761)),
-    #     ]
-    # )
     train_transform = transforms.Compose(
         [
             transforms.Resize((224, 224)),
@@ -61,13 +55,6 @@ def get_dataloader(save_dir):
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
-
-    # valid_transform = transforms.Compose(
-    #     [
-    #         transforms.ToTensor(),
-    #         transforms.Normalize((0.5071, 0.4867, 0.4304), (0.2675, 0.2565, 0.2761)),
-    #     ]
-    # )
 
     valid_transform = transforms.Compose(
         [
@@ -123,8 +110,33 @@ if __name__ == "__main__":
         )
         # evaluate performance
         VGGProcessor.evaluate(model=model, test_loader=test_loader, device=device)
-        pass
-    
+
     elif args.option == 5:
+        model = efficientnet_b0(pretrained=True)
+        summary(model, input_size=input_size)
+
+        # train model
+        EFFICIENT_B0.fine_tune(
+            model=model, train_loader=train_loader, model_config=EfficientConfig
+        )
+        # evaluate performance 
+        EFFICIENT_B0.evaluate(model= model, test_loader= test_loader, device= device)
         
+    elif args.option == 7:
+        vit_model_name = "google/vit-base-patch16-224"
+        model = ViTForImageClassification.from_pretrained(
+            vit_model_name,
+            num_labels= 100, 
+            ignore_mismatched_sizes= True
+        )
+        
+        # train model
+        VisionTransfomers.fine_tune(
+            model= model, train_loader= train_loader, model_config= ViTConfig
+        )
+
+        # evaluate performance 
+        VisionTransfomers.evaluate(model= model, test_loader= test_loader, device= device)
+    
+    elif args.option == 9: 
         pass 
