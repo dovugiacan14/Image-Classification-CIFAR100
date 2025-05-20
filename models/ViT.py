@@ -7,6 +7,7 @@ class VisionTransfomers:
     def fine_tune(model, train_loader, model_config):
         model.to(model_config.device)
         optimizer = model_config.optimizer_fn(model)
+        scheduler = model_config.scheduler()
         for epoch in range(model_config.num_epochs):
             model.train()
             running_loss = 0.0
@@ -34,7 +35,8 @@ class VisionTransfomers:
             print(
                 f"Epoch [{epoch+1}/{model_config.num_epochs}], Loss: {avg_loss:.4f}, Train Acc: {accuracy:.2f}%"
             )
-
+            scheduler.step()
+            
         # save model
         output_filename = f"{model_config.out_name}_{model_config.num_epochs}.pt"
         torch.save(model.state_dict(), output_filename)
