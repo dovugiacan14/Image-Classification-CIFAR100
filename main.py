@@ -1,12 +1,9 @@
 import torch
-import random
 import argparse
-import numpy as np
 from torchsummary import summary
-from torchvision import transforms
-from torchvision import datasets as dset
 from torchvision.models import efficientnet_b0
-from transformers import ViTForImageClassification, ViTFeatureExtractor
+from transformers import ViTForImageClassification
+from utils.utils import set_random_seed, get_dataloader, extract_features_from_loader
 from models import *
 from config import *
 
@@ -34,48 +31,6 @@ def parse_arguments():
         """,
     )
     return parser.parse_args()
-
-
-def set_random_seed(seed: int = 42):
-    random.seed(seed)
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)  # for multi-GPU setups
-    torch.backends.cudnn.deterministic = True
-    torch.backends.cudnn.benchmark = False
-
-
-def get_dataloader(save_dir):
-    train_transform = transforms.Compose(
-        [
-            transforms.Resize((224, 224)),
-            transforms.RandomHorizontalFlip(p=0.7),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ]
-    )
-
-    valid_transform = transforms.Compose(
-        [
-            transforms.Resize((224, 224)),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-        ]
-    )
-    train_data = dset.CIFAR100(
-        root=save_dir, train=True, download=True, transform=train_transform
-    )
-    test_data = dset.CIFAR100(
-        root=save_dir, train=False, download=True, transform=valid_transform
-    )
-    train_loader = torch.utils.data.DataLoader(
-        train_data, batch_size=32, shuffle=True, num_workers=0
-    )
-    test_loader = torch.utils.data.DataLoader(
-        test_data, batch_size=32, shuffle=True, num_workers=0
-    )
-    return train_loader, test_loader
 
 
 if __name__ == "__main__":
@@ -119,24 +74,35 @@ if __name__ == "__main__":
         EFFICIENT_B0.fine_tune(
             model=model, train_loader=train_loader, model_config=EfficientConfig
         )
-        # evaluate performance 
-        EFFICIENT_B0.evaluate(model= model, test_loader= test_loader, device= device)
-        
+        # evaluate performance
+        EFFICIENT_B0.evaluate(model=model, test_loader=test_loader, device=device)
+
     elif args.option == 7:
         vit_model_name = "google/vit-base-patch16-224"
         model = ViTForImageClassification.from_pretrained(
-            vit_model_name,
-            num_labels= 100, 
-            ignore_mismatched_sizes= True
+            vit_model_name, num_labels=100, ignore_mismatched_sizes=True
         )
-        
+        summary(model, input_size=input_size)
         # train model
         VisionTransfomers.fine_tune(
-            model= model, train_loader= train_loader, model_config= ViTConfig
+            model=model, train_loader=train_loader, model_config=ViTConfig
         )
 
-        # evaluate performance 
-        VisionTransfomers.evaluate(model= model, test_loader= test_loader, device= device)
-    
-    elif args.option == 9: 
-        pass 
+        # evaluate performance
+        VisionTransfomers.evaluate(model=model, test_loader=test_loader, device=device)
+
+    elif args.option == 9:
+        svm_model = SVM()
+        pretrained_model = svm_model.load_pretrained_model(device= device)
+        
+        # get dataset 
+        X_train, y_train = extract_features_from_loader(pretrained_model, train_loader, device)
+        X_test, y_test = extract_features_from_loader(pretrained_model, test_loader, device)
+        data_train = (X_train, y_train)
+        data_test = (X_test, y_test)
+
+        # train model 
+        svm_model.train(data_train)
+
+        # evaluate 
+        svm_model.evaluate(data_test)
