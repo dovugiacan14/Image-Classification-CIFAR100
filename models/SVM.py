@@ -30,7 +30,7 @@ class SVM:
         joblib.dump(self.svm_model, self.model_path)
         print(f"Saving SVM model to {self.model_path}")
 
-    def evaluate(self, model, data_test): 
+    def evaluate(self, data_test): 
         X_test, y_test = data_test
         if self.svm_model is None: 
             if os.path.exists(self.model_path): 

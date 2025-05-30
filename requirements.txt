@@ -4,3 +4,4 @@ torchsummary
 dataset
 transformer
 tqdm
+torch-optimizer
