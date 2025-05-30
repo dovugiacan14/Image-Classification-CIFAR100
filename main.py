@@ -55,6 +55,20 @@ if __name__ == "__main__":
         # evaluate performance
         CNNProcessor.evaluate(model=model, test_loader=test_loader, device=device)
 
+    elif args.option == 2: 
+        model = ResNet50_NET().to(device)
+        summary(model, input_size== input_size)
+
+        # train model 
+        ResNetProcessor.train_model(
+            model= model, 
+            train_loader= train_loader, 
+            model_config= ResNetConfig
+        )
+
+        # evluate performance 
+        ResNetProcessor.evaluate(model= model, test_loader= test_loader, device= device)
+
     elif args.option == 3:
         model = VGG16_NET().to(device)
         summary(model, input_size=input_size)
@@ -65,6 +79,20 @@ if __name__ == "__main__":
         )
         # evaluate performance
         VGGProcessor.evaluate(model=model, test_loader=test_loader, device=device)
+
+    elif args.option == 4:
+        model = DenseNet121_NET().to(device)
+        summary(model, input_size= input_size)
+        
+        # train model 
+        DenseNetProcessor.train_model(
+            model= model, 
+            train_loader= train_loader, 
+            config= DenseNetConfig
+        )
+
+        # evaluate performance 
+        DenseNetProcessor.evaluate(model= model, test_loader= test_loader, device= device)
 
     elif args.option == 5:
         model = efficientnet_b0(pretrained=True)
@@ -77,6 +105,24 @@ if __name__ == "__main__":
         # evaluate performance
         EFFICIENT_B0.evaluate(model=model, test_loader=test_loader, device=device)
 
+    elif args.option == 6:
+        model = ConvNeXtTiny_NET().to(device)
+        summary(model, input_size= input_size)
+
+        # train model 
+        ConvNeXtProcessor.train_model(
+            model= model, 
+            train_loader= train_loader, 
+            config= ConvNeXtConfig
+        )
+
+        # evaluate performance
+        ConvNeXtProcessor.evaluate(
+            model= model, 
+            test_loader= test_loader, 
+            config= ConvNeXtConfig
+        )
+    
     elif args.option == 7:
         vit_model_name = "google/vit-base-patch16-224"
         model = ViTForImageClassification.from_pretrained(
@@ -90,6 +136,24 @@ if __name__ == "__main__":
 
         # evaluate performance
         VisionTransfomers.evaluate(model=model, test_loader=test_loader, device=device)
+
+    elif args.option == 8: 
+        model = SwinTinyWrapper(SwinConfig).to(device)
+        print(model)
+        
+        # train model 
+        SwinProcessor.fine_tune(
+            model= model, 
+            train_loader= train_loader, 
+            config= SwinConfig
+        )
+
+        # evaluate 
+        SwinProcessor.evaluate(
+            model= model, 
+            test_loader= test_loader, 
+            config= SwinConfig
+        ) 
 
     elif args.option == 9:
         svm_model = SVM()
