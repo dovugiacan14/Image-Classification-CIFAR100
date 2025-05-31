@@ -16,7 +16,8 @@ class CNNConfig:
     num_epochs = 2
     batch_size = 32
     device = device
-    out_name = "cnn_model"
+    out_name = os.path.join(save_dir, "cnn_model")
+    os.makedirs(out_name, exist_ok= True)
 
     @staticmethod
     def optimizer_fn(model):

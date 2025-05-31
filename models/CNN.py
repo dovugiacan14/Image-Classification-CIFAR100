@@ -1,8 +1,10 @@
+import os
 import torch
 from torch import nn
 from torchvision import transforms
 from torch.nn import functional as F
 from PIL import Image
+
 
 class BasicCNN(nn.Module):
     def __init__(self):
@@ -12,7 +14,6 @@ class BasicCNN(nn.Module):
         self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
         self.mp = nn.MaxPool2d(2, 2)
         self.fc1 = nn.Linear(93312, 256)
-        # self.fc1 = nn.Linear(128 * 3 * 3, 256)
         self.fc2 = nn.Linear(256, 100)
 
     def forward(self, x):
@@ -30,6 +31,10 @@ class CNNProcessor:
     def train_model(model, train_loader, model_config):
         model.to(model_config.device)
         optimizer = model_config.optimizer_fn(model)
+        best_model_path = os.path.join(model_config.output_dir, "best.pt")
+        last_model_path = os.path.join(model_config.output_dir, "last.pt")
+        best_accuracy = 0.0
+
         for epoch in range(model_config.num_epochs):
             model.train()
             running_loss = 0.0
@@ -55,14 +60,20 @@ class CNNProcessor:
             avg_loss = running_loss / len(train_loader)
             accuracy = 100 * correct / total
             print(
-                f"Epoch [{epoch+1}/{model_config.num_epochs}], Loss: {avg_loss:.4f}, Train Acc: {accuracy:.2f}%"
+                f"Epoch [{epoch+1}/{model_config.num_epochs}], "
+                f"Loss: {avg_loss:.4f}, Train Acc: {accuracy:.2f}%"
             )
-        
-        # save model
+
+            # save best model
+            if accuracy > best_accuracy:
+                best_accuracy = accuracy
+                torch.save(model.state_dict(), best_model_path)
+                print(f"New best model saved to {best_model_path}.")
+
+        # save last model
         output_filename = f"{model_config.out_name}_{model_config.num_epochs}.pt"
         torch.save(model.state_dict(), output_filename)
         print(f"Model saved to {output_filename}.")
-
 
     @staticmethod
     def evaluate(model, test_loader, device="cpu"):
