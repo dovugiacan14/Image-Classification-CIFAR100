@@ -5,26 +5,7 @@ from torchvision import transforms
 from torch.nn import functional as F
 from PIL import Image
 
-# more than 4h GPU
-# class BasicCNN(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-#         self.conv1 = nn.Conv2d(3, 32, kernel_size=3, padding=1)
-#         self.conv2 = nn.Conv2d(32, 64, kernel_size=4, padding=1)
-#         # self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
-#         self.mp = nn.MaxPool2d(2, 2)
-#         # self.fc1 = nn.Linear(93312, 256)
-#         self.fc1 = nn.Linear(193600,256)
-#         self.fc2 = nn.Linear(256, 100)
 
-#     def forward(self, x):
-#         x = self.mp(F.relu(self.conv1(x)))
-#         x = self.mp(F.relu(self.conv2(x)))
-#         # x = self.mp(F.relu(self.conv3(x)))
-#         x = x.view(x.size(0), -1)
-#         x = F.relu(self.fc1(x))
-#         x = self.fc2(x)
-#         return x
 class BasicCNN(nn.Module):
     def __init__(self):
         super().__init__()
@@ -55,8 +36,10 @@ class CNNProcessor:
     def train_model(model, train_loader, model_config):
         model.to(model_config.device)
         optimizer = model_config.optimizer_fn(model)
-        best_model_path = os.path.join(model_config.out_name, "best.pt")
-        last_model_path = os.path.join(model_config.out_name, "last.pt")
+        best_model_path = f"{model_config.out_name}_best.pt"
+        last_model_path = f"{model_config.out_name}_last.pt"
+        # best_model_path = os.path.join(model_config.out_name, "best.pt")
+        # last_model_path = os.path.join(model_config.out_name, "last.pt")
         best_accuracy = 0.0
 
         for epoch in range(model_config.num_epochs):
