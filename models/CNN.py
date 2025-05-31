@@ -71,9 +71,8 @@ class CNNProcessor:
                 print(f"New best model saved to {best_model_path}.")
 
         # save last model
-        output_filename = f"{model_config.out_name}_{model_config.num_epochs}.pt"
-        torch.save(model.state_dict(), output_filename)
-        print(f"Model saved to {output_filename}.")
+        torch.save(model.state_dict(), last_model_path)
+        print(f"Last model saved to {last_model_path}.")
 
     @staticmethod
     def evaluate(model, test_loader, device="cpu"):
