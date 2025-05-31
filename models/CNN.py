@@ -5,7 +5,7 @@ from torchvision import transforms
 from torch.nn import functional as F
 from PIL import Image
 
-
+# more than 4h GPU
 class BasicCNN(nn.Module):
     def __init__(self):
         super().__init__()
@@ -14,7 +14,7 @@ class BasicCNN(nn.Module):
         # self.conv3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
         self.mp = nn.MaxPool2d(2, 2)
         # self.fc1 = nn.Linear(93312, 256)
-        self.fc1 = nn.Linear(36864,256)
+        self.fc1 = nn.Linear(193600,256)
         self.fc2 = nn.Linear(256, 100)
 
     def forward(self, x):
