@@ -1,3 +1,4 @@
+import time
 import torch
 import argparse
 from torchsummary import summary
@@ -46,12 +47,12 @@ if __name__ == "__main__":
     if args.option == 1:
         model = BasicCNN().to(device)
         summary(model, input_size=input_size)  # summary model
-
+        start_time = time.time()
         # train model
         CNNProcessor.train_model(
             model=model, train_loader=train_loader, model_config=CNNConfig
         )
-
+        print(f"Time for training: {time.time() - start_time}")
         # evaluate performance
         CNNProcessor.evaluate(model=model, test_loader=test_loader, device=device)
 
