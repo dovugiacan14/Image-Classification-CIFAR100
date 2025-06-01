@@ -163,8 +163,8 @@ if __name__ == "__main__":
         pretrained_model = svm_model.load_pretrained_model(device= device)
         
         # get dataset 
-        X_train, y_train = extract_features_from_loader(pretrained_model, train_loader, device)
-        X_test, y_test = extract_features_from_loader(pretrained_model, test_loader, device)
+        X_train, y_train = extract_features_from_loader(pretrained_model, train_loader)
+        X_test, y_test = extract_features_from_loader(pretrained_model, test_loader)
         data_train = (X_train, y_train)
         data_test = (X_test, y_test)
 
