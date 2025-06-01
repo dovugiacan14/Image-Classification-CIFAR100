@@ -91,6 +91,10 @@ class VGGProcessor:
     def train_model(model, train_loader, model_config):
         model.to(model_config.device)
         optimizer = model_config.optimizer_fn(model)
+        best_model_path = f"{model_config.out_name}_best.pt"
+        last_model_path = f"{model_config.out_name}_last.pt"
+        best_accuraccy = 0.0 
+
         for epoch in range(model_config.num_epochs):
             model.train()
             running_loss = 0.0
@@ -116,13 +120,19 @@ class VGGProcessor:
             avg_loss = running_loss / len(train_loader)
             accuracy = 100 * correct / total
             print(
-                f"Epoch [{epoch+1}/{model_config.num_epochs}], Loss: {avg_loss:.4f}, Train Acc: {accuracy:.2f}%"
+                f"Epoch [{epoch+1}/{model_config.num_epochs}], "
+                f"Loss: {avg_loss:.4f}, Train Acc: {accuracy:.2f}%"
             )
 
+            # save best model 
+            if accuracy > best_accuraccy:
+                best_accuraccy = accuracy 
+                torch.save(model.state_dict(), best_model_path)
+                print(f"New best model saved to {best_model_path}.")
+
         # save model
-        output_filename = f"{model_config.out_name}_{model_config.num_epochs}.pt"
-        torch.save(model.state_dict(), output_filename)
-        print(f"Model saved to {output_filename}.")
+        torch.save(model.state_dict(), last_model_path)
+        print(f"Last model saved to {last_model_path}.")
 
     @staticmethod
     def evaluate(model, test_loader, device="cpu"):

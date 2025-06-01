@@ -74,10 +74,12 @@ if __name__ == "__main__":
         model = VGG16_NET().to(device)
         summary(model, input_size=input_size)
 
+        start_time = time.time()
         # train model
         VGGProcessor.train_model(
             model=model, train_loader=train_loader, model_config=VGGConfig
         )
+        print(f"Time for training: {time.time() - start_time}")
         # evaluate performance
         VGGProcessor.evaluate(model=model, test_loader=test_loader, device=device)
 
