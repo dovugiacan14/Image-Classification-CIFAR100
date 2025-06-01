@@ -2,6 +2,8 @@
 
 This repository contains implementations of various deep learning models for image classification on the CIFAR-100 dataset. The project includes both traditional deep learning architectures and modern transformer-based models.
 
+**All training results and model checkpoints are stored in the 'training' folder.**
+
 ## Models Implemented
 
 - **Custom CNN**: A custom Convolutional Neural Network architecture
