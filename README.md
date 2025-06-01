@@ -4,6 +4,8 @@ This repository contains implementations of various deep learning models for ima
 
 **All training results and model checkpoints are stored in the 'training' folder.**
 
+**All trained model checkpoints, performance results, and training configurations have been saved at  [Google Drvie](https://drive.google.com/drive/u/0/folders/1Np4O6RqHETBvm0XBHkSOyXs5IzhoM3PW)** 
+
 ## Models Implemented
 
 - **Custom CNN**: A custom Convolutional Neural Network architecture
